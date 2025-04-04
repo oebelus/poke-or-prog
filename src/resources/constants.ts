@@ -1,0 +1,15 @@
+export const insults = [
+  "You Suck.",
+  "You are a loser.",
+  "You are a failure.",
+  "You are a disgrace to your kind.",
+  "You are a piece of garbage.",
+  "You are a disgrace to your race.",
+  "You are a disgrace to your family.",
+  "You are a disgrace to your country.",
+  "You are a waste of space",
+  "You should be ashamed of yourself.",
+  "You are a waste of oxygen.",
+  "Did you consider killing yourself?",
+  "You should apologize to the tree that made your oxygen.",
+];
