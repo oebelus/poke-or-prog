@@ -5,7 +5,7 @@ import { Pokemons } from "./resources/pokemons"
 import { insults } from "./resources/constants"
 
 function App() {
-  const [gameOver, setGameOver] = useState(true)
+  const [gameOver, setGameOver] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
   const [questionTuple, setQuestionTuple] = useState(["", ""])
   const [HP, setHP] = useState(3)
