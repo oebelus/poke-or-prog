@@ -16,6 +16,7 @@ function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 }); 
 
   const [score, setScore] = useState(0)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   const pokemonRef = useRef<HTMLParagraphElement>(null);
   const programmingRef = useRef<HTMLParagraphElement>(null);
@@ -86,8 +87,8 @@ function App() {
       const pokemonRect = pokemonRef.current?.getBoundingClientRect();
       const programmingRect = programmingRef.current?.getBoundingClientRect();
 
-      const heartX = position.x + heartRef.current!.x
-      const heartY = position.y + heartRef.current!.y
+      const heartX = position.x + (heartRef.current ? heartRef.current.x : 0)
+      const heartY = position.y + (heartRef.current ? heartRef.current.y : 0)
 
       if (pokemonRect && heartX < pokemonRect.x + pokemonRect.width && heartX > pokemonRect.x &&
           heartY < pokemonRect.y + pokemonRect.height && heartY > pokemonRect.y) {
@@ -137,7 +138,7 @@ function App() {
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 639px)').matches || window.matchMedia('(min-width: 640px) and (max-width: 1023px)').matches) {
-      setGameOver(true)
+      setIsSmallScreen(true)
     }
   }, [])
 
@@ -152,7 +153,7 @@ function App() {
     setScore(0)
   }
 
-  if (gameOver) 
+  if (gameOver || isSmallScreen) 
     return (
       <div className="bg-black h-screen mx-auto"> 
         <p className="text-[10rem] text-center text-white leading-8 font-mono relative top-24">GAME</p>
@@ -162,8 +163,8 @@ function App() {
         <p className="mt-2 text-white font-mono text-center text-xl md:text-3xl">And stay filled with determination...</p>
         <div
           onClick={handleStartOver} 
-          className="lg:mt-12 mt-8 mx-auto mt-2 font-mono text-center text-xl md:text-3xl border-2 sm:border-4 border-yellow-300 text-yellow-300 p-1 p-4 w-1/2 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer">
-            TRY AGAIN
+          className="lg:mt-12 mt-8 mx-auto  font-mono text-center text-xl md:text-3xl border-2 sm:border-4 border-yellow-300 text-yellow-300 p-1 w-1/2 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer">
+            TRY {isSmallScreen ? "ON A BIGGER SCREEN" : "AGAIN"}
         </div>
         <p className="relative lg:top-20 top-8 text-white font-mono text-center text-xl md:text-3xl">{"("}{insults[Math.floor(Math.random() * insults.length)]}{")"}</p>
 
@@ -175,34 +176,41 @@ function App() {
         <h1 className="mx-auto relative md:top-12 top-8 text-3xl sm:text-5xl text-center text-white font-mono"><i>POKEMON OR PROGRAMMING TERM?</i></h1>
         <div className="h-screen lg:w-1/2 mx-auto flex flex-col justify-center gap-1 sm:gap-4">
           <div className="-mt-6 lg:mt-6 flex mx-4 mb-4">
-            <img className="mx-auto w-2/4 sm:w-1/4 sm:w-72" src="mettaton.png" alt="mettaton" />
+            <img className="mx-auto w-2/4 sm:w-1/4 text-white" src="mettaton.png" alt="imagine mettaton here" />
             <div className="flex mx-auto h-1/2 w-1/2">
-              <div className={`pixel-corners bg-white text-black bubble grow left ${ !gameStarted ? "h-fit" : ""}`}>
+              <div className={`pixel-corners bg-white min-h-42 text-black bubble grow left ${!gameStarted ? "h-fit text-wrap" : ""}`}>
                 {
                   !gameStarted ?
-                  <p className="p-4 text-gray-800 sm:text-2xl font-mono font-bold">
+                  <p className="p-4 text-gray-800 sm:text-2xl font-mono font-bold ph-2 break-words whitespace-pre-line">
                     * OH BOY!
                     <br/>
-                    * I CAN ALREADY TELL IT'S GONNA <br></br>BE A GREAT SHOW!
+                    * I CAN ALREADY TELL IT'S GONNA <br/>BE A GREAT SHOW!
                   </p>
                   :
-                  <p className={`${questionTuple[0].split(" ").length < 2 ? "ml-8 " : ""} mt-8 font-bold font-mono text-black absolute p-2 text-center text-3xl`}>{questionTuple[0]}</p>
+                  <p className={`${questionTuple[0].split(" ").length < 2 ? "ml-8 " : ""} mt-8 font-bold font-mono text-black p-2 text-center text-3xl break-words whitespace-pre-line max-w-full`}>
+                    {questionTuple[0]}
+                  </p>
                 }
               </div>
             </div>
           </div>
 
           {/* QUIZ ANSWERS */}
-          <div className="font-mono sm:border-6 border-4 border-white p-4 h-1/4 mx-12 flex flex-col sm:flex-row justify-between md:gap-1 gap-4 items-center gap-4 sm:gap-6">
+          <div className="font-mono sm:border-6 border-4 border-white p-4 h-1/4 mx-12 flex flex-col sm:flex-row justify-between md:gap-1 gap-4 items-center sm:gap-6">
                 <p ref={pokemonRef} id="pokemon" className={`${pokemonColor} ${gameStarted ? "flex" : "hidden"} md:text-4xl text-2xl mt-2 md:mb-2 md:ml-8`}>pokemon</p>
-                <p ref={programmingRef} id="programming" className={`${programmingColor} ${gameStarted ? "flex" : "hidden"} md:text-4xl text-2xl mb-2 md:mt-2 md:mr-8`}>programming</p>
+                
                 <img 
                   src="red-heart.png"
                   style={{
                     transform: `translate(${position.x}px, ${position.y}px)`,
                   }}
                   ref={heartRef}
-                  className="w-10 absolute left-1/2 transform -translate-x-1/2" alt="heart" />
+                  className="w-10 text-white absolute left-1/2 transform -translate-x-1/2 md:mt-1 mt-18"
+                  alt="heart" 
+                />
+
+                <p ref={programmingRef} id="programming" className={`${programmingColor} ${gameStarted ? "flex" : "hidden"} md:text-4xl text-2xl mb-2 md:mt-2 md:mr-8`}>programming</p>
+
           </div>
 
           {/* HP */}
@@ -210,14 +218,14 @@ function App() {
             {
               3 - HP > 0 && Array(3-HP).fill(0).map((_, index) => (
                 <div className="w-10" key={index}>
-                  <img className="opacity-40" src="red-heart.png" alt="heart" />
+                  <img className="text-white opacity-40" src="red-heart.png" alt="heart" />
                 </div>
               ))
             }
             {
               HP > 0 && Array(HP).fill(0).map((_, index) => (
                 <div className="w-10" key={index}>
-                  <img src="red-heart.png" alt="heart" />
+                  <img className="text-white" src="red-heart.png" alt="<3" />
                 </div>
               ))
             }
@@ -228,9 +236,9 @@ function App() {
               className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer"
               onClick={gameStarted ? () => setGameOver(true) : handleStart}
             >{gameStarted ? "END" : "START"}</div>
-            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer">ACT</div>
-            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer">ITEM</div>
-            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 hover:border-[#cc5b1c] hover:text-[#cc5b1c] transition-all cursor-pointer">MERCY</div>
+            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 transition-all cursor-not-allowed">ACT</div>
+            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 transition-all cursor-not-allowed">ITEM</div>
+            <div className="border-2 sm:border-4 border-[#E78650] text-[#E78650] p-1 sm:p-4 md:w-1/4 transition-all cursor-not-allowed">MERCY</div>
           </div>
         </div>
       </div>
